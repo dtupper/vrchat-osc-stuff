@@ -7,7 +7,7 @@ from typing import Optional
 import keyboard
 
 # Honestly ctypes is probably overkill and it baloons the size of the program when compiled
-# but I can't think of a better way to grab window names.
+# but I can't find a better way to grab window names.
 from ctypes import windll, create_unicode_buffer
 
 
@@ -16,17 +16,13 @@ def send_movement(input, client, val=1):
         client.send_message("/input/" + input, val)
 
 
+# https://stackoverflow.com/a/58355052
 def getForegroundWindowTitle() -> Optional[str]:
     hWnd = windll.user32.GetForegroundWindow()
     length = windll.user32.GetWindowTextLengthW(hWnd)
     buf = create_unicode_buffer(length + 1)
     windll.user32.GetWindowTextW(hWnd, buf, length + 1)
-
-    # 1-liner alternative: return buf.value if buf.value else None
-    if buf.value:
-        return buf.value
-    else:
-        return None
+    return buf.value if buf.value else None
 
 
 if __name__ == "__main__":
@@ -61,7 +57,7 @@ if __name__ == "__main__":
         elif event.event_type == keyboard.KEY_UP and event.name == "right shift":
             send_movement("Run", client, 0)
 
-    """
+"""
 This is free and unencumbered software released into the public domain.
 
 Anyone is free to copy, modify, publish, use, compile, sell, or
@@ -86,4 +82,4 @@ ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 OTHER DEALINGS IN THE SOFTWARE.
 
 For more information, please refer to <http://unlicense.org/>
-    """
+"""
